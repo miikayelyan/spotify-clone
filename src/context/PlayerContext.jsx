@@ -8,11 +8,12 @@ export default function PlayerContextProvider(props) {
   const seekBg = useRef();
   const seekBar = useRef();
 
-  const [track, setTrack] = useState(songsData[1]);
+  const [track, setTrack] = useState(songsData[0]);
   const [playStatus, setPlayStatus] = useState(false);
+  const [minute, second] = track.duration.split(':');
   const [time, setTime] = useState({
     currentTime: { second: 0, minute: 0 },
-    totalTime: { second: 0, minute: 0 },
+    totalTime: { second, minute },
   });
 
   const play = () => {
@@ -41,8 +42,12 @@ export default function PlayerContextProvider(props) {
 
   const next = async () => {
     if (track.id < songsData.length - 1) {
-      setTrack(songsData[track.id + 1]);
       await audioRef.current.play();
+      setTrack(songsData[track.id + 1]);
+      // setTime({
+      //   ...time,
+      //   totalTime: { second, minute },
+      // });
       setPlayStatus(true);
     }
   };
