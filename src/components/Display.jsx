@@ -12,7 +12,6 @@ export default function Display() {
   const bgColor = albumsData[Number(albumId)].bgColor;
 
   useEffect(() => {
-    console.log(location.pathname);
     isAlbum
       ? (displayRef.current.style.background = `linear-gradient(${bgColor}, #121212)`)
       : (displayRef.current.style.background = '#121212');

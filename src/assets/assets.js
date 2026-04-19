@@ -121,7 +121,7 @@ export const songsData = [
     image: img1,
     file: song1,
     desc: 'Put a smile on your face with these happy tunes',
-    duration: '3:00',
+    duration: '3:28',
   },
   {
     id: 1,
@@ -129,7 +129,7 @@ export const songsData = [
     image: img2,
     file: song2,
     desc: 'Put a smile on your face with these happy tunes',
-    duration: '2:20',
+    duration: '3:58',
   },
   {
     id: 2,
@@ -137,7 +137,7 @@ export const songsData = [
     image: img3,
     file: song3,
     desc: 'Put a smile on your face with these happy tunes',
-    duration: '2:32',
+    duration: '3:28',
   },
   {
     id: 3,

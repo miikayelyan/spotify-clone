@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import './App.css';
 import Display from './components/Display';
 import Player from './components/Player';
@@ -7,6 +7,9 @@ import { PlayerContext } from './context/PlayerContext';
 
 export default function App() {
   const { audioRef, track } = useContext(PlayerContext);
+  // useEffect(() => {
+  //   console.log(audioRef, "audio ref after the component's render");
+  // }, [audioRef]);
 
   return (
     <div className="h-screen bg-black">

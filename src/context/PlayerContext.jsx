@@ -3,14 +3,16 @@ import { songsData } from '../assets/assets';
 
 export const PlayerContext = createContext();
 
-export default function PlayerContextProvider(props) {
+export default function PlayerContextProvider({ children }) {
   const audioRef = useRef();
   const seekBg = useRef();
   const seekBar = useRef();
 
   const [track, setTrack] = useState(songsData[0]);
   const [playStatus, setPlayStatus] = useState(false);
+
   const [minute, second] = track.duration.split(':');
+
   const [time, setTime] = useState({
     currentTime: { second: 0, minute: 0 },
     totalTime: { second, minute },
@@ -27,14 +29,15 @@ export default function PlayerContextProvider(props) {
   };
 
   const playWithId = async (id) => {
+    audioRef.current.pause();
     setTrack(songsData[id]);
     await audioRef.current.play();
     setPlayStatus(true);
   };
 
-  const previous = async () => {
+  const previous = () => {
     if (track.id > 0) {
-      setTrack(songsData[track.id - 1]);
+      await setTrack(songsData[track.id - 1]);
       await audioRef.current.play();
       setPlayStatus(true);
     }
@@ -42,13 +45,12 @@ export default function PlayerContextProvider(props) {
 
   const next = async () => {
     if (track.id < songsData.length - 1) {
-      await audioRef.current.play();
-      setTrack(songsData[track.id + 1]);
-      // setTime({
-      //   ...time,
-      //   totalTime: { second, minute },
-      // });
+      const nextTrack = songsData[track.id + 1];
+      await setTrack(nextTrack);
       setPlayStatus(true);
+      audioRef.current.play();
+      const [minute, second] = nextTrack.duration.split(':');
+      setTime({ ...time, totalTime: { second, minute } });
     }
   };
 
@@ -61,16 +63,14 @@ export default function PlayerContextProvider(props) {
     audioRef.current.ontimeupdate = () => {
       seekBar.current.style.width =
         Math.floor((audioRef.current.currentTime / audioRef.current.duration) * 100) + '%';
-      setTime({
+
+      setTime((prev) => ({
+        ...prev,
         currentTime: {
           second: Math.floor(audioRef.current.currentTime % 60),
           minute: Math.floor(audioRef.current.currentTime / 60),
         },
-        totalTime: {
-          second: Math.floor(audioRef.current.duration % 60),
-          minute: Math.floor(audioRef.current.duration / 60),
-        },
-      });
+      }));
     };
   }, [audioRef, seekBar]);
 
@@ -92,5 +92,5 @@ export default function PlayerContextProvider(props) {
     seekSong,
   };
 
-  return <PlayerContext.Provider value={contextValue}>{props.children}</PlayerContext.Provider>;
+  return <PlayerContext.Provider value={contextValue}>{children}</PlayerContext.Provider>;
 }
