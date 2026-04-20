@@ -29,17 +29,32 @@ export default function PlayerContextProvider({ children }) {
   };
 
   const playWithId = async (id) => {
-    audioRef.current.pause();
-    setTrack(songsData[id]);
+    const trackWithId = songsData[id];
+    await setTrack(songsData[id]);
     await audioRef.current.play();
     setPlayStatus(true);
+    setTime({
+      ...time,
+      totalTime: {
+        second: trackWithId.duration.split(':')[1],
+        minute: trackWithId.duration.split(':')[0],
+      },
+    });
   };
 
-  const previous = () => {
+  const previous = async () => {
     if (track.id > 0) {
-      await setTrack(songsData[track.id - 1]);
+      const prevTrack = songsData[track.id - 1];
+      await setTrack(prevTrack);
       await audioRef.current.play();
       setPlayStatus(true);
+      setTime({
+        ...time,
+        totalTime: {
+          second: prevTrack.duration.split(':')[1],
+          minute: prevTrack.duration.split(':')[0],
+        },
+      });
     }
   };
 
@@ -47,10 +62,17 @@ export default function PlayerContextProvider({ children }) {
     if (track.id < songsData.length - 1) {
       const nextTrack = songsData[track.id + 1];
       await setTrack(nextTrack);
+      await audioRef.current.play();
       setPlayStatus(true);
-      audioRef.current.play();
-      const [minute, second] = nextTrack.duration.split(':');
-      setTime({ ...time, totalTime: { second, minute } });
+      // const [minute, second] = nextTrack.duration.split(':');
+      // setTime({ ...time, totalTime: { second, minute } });
+      setTime({
+        ...time,
+        totalTime: {
+          second: nextTrack.duration.split(':')[1],
+          minute: nextTrack.duration.split(':')[0],
+        },
+      });
     }
   };
 
@@ -72,7 +94,9 @@ export default function PlayerContextProvider({ children }) {
         },
       }));
     };
-  }, [audioRef, seekBar]);
+  }, []);
+
+  // useEffect(() => {}, [track]);
 
   const contextValue = {
     audioRef,
