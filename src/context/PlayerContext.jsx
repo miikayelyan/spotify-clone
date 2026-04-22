@@ -30,7 +30,7 @@ export default function PlayerContextProvider({ children }) {
 
   const playWithId = async (id) => {
     const trackWithId = songsData[id];
-    await setTrack(songsData[id]);
+    await setTrack(trackWithId);
     await audioRef.current.play();
     setPlayStatus(true);
     setTime({
@@ -64,8 +64,6 @@ export default function PlayerContextProvider({ children }) {
       await setTrack(nextTrack);
       await audioRef.current.play();
       setPlayStatus(true);
-      // const [minute, second] = nextTrack.duration.split(':');
-      // setTime({ ...time, totalTime: { second, minute } });
       setTime({
         ...time,
         totalTime: {
@@ -95,8 +93,6 @@ export default function PlayerContextProvider({ children }) {
       }));
     };
   }, []);
-
-  // useEffect(() => {}, [track]);
 
   const contextValue = {
     audioRef,
