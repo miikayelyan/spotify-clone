@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import './App.css';
 import Display from './components/Display';
 import Player from './components/Player';

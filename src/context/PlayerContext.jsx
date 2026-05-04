@@ -1,7 +1,8 @@
-import { createContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { songsData } from '../assets/assets';
+import { PlayerContext } from './PlayerContextData';
 
-export const PlayerContext = createContext();
+export { PlayerContext };
 
 export default function PlayerContextProvider({ children }) {
   const audioRef = useRef();
