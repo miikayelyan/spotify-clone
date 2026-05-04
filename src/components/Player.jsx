@@ -3,9 +3,20 @@ import { assets } from '../assets/assets';
 import { PlayerContext } from '../context/PlayerContext';
 
 export default function Player() {
-  const { time, track, seekBar, seekBg, playStatus, play, pause, previous, next, seekSong } =
-    useContext(PlayerContext);
-  // console.log(time);
+  const {
+    time,
+    track,
+    seekBar,
+    seekBg,
+    playStatus,
+    play,
+    pause,
+    previous,
+    next,
+    seekSong,
+    toggleShuffle,
+  } = useContext(PlayerContext);
+
   return (
     <div className="h-[10%] bg-black flex justify-between items-center text-white px-4">
       <div className="hidden lg:flex items-center gap-4">
@@ -17,7 +28,12 @@ export default function Player() {
       </div>
       <div className="flex flex-col items-center gap-1 m-auto">
         <div className="flex gap-4">
-          <img className="w-4 cursor-pointer" src={assets.shuffle_icon} alt="" />
+          <img
+            onClick={toggleShuffle}
+            className="w-4 cursor-pointer"
+            src={assets.shuffle_icon}
+            alt=""
+          />
           <img onClick={previous} className="w-4 cursor-pointer" src={assets.prev_icon} alt="" />
           {playStatus ? (
             <img onClick={pause} className="w-4 cursor-pointer" src={assets.pause_icon} alt="" />
@@ -29,8 +45,7 @@ export default function Player() {
         </div>
         <div className="flex items-center gap-5">
           <p>
-            {time.currentTime.minute}:
-            {time.currentTime.second < 10 ? `0${time.currentTime.second}` : time.currentTime.second}
+            {time.minute}:{time.second < 10 ? `0${time.second}` : time.second}
           </p>
           <div
             ref={seekBg}
@@ -40,7 +55,7 @@ export default function Player() {
             <hr ref={seekBar} className="h-1 border-none w-10 bg-green-800 rounded-full" />
           </div>
           <p>
-            {time.totalTime.minute}:{time.totalTime.second}
+            {track.duration.split(':')[0]}:{track.duration.split(':')[1]}
           </p>
         </div>
       </div>

@@ -7,9 +7,6 @@ import { PlayerContext } from './context/PlayerContext';
 
 export default function App() {
   const { audioRef, track } = useContext(PlayerContext);
-  // useEffect(() => {
-  //   console.log(audioRef, "audio ref after the component's render");
-  // }, [audioRef]);
 
   return (
     <div className="h-screen bg-black">

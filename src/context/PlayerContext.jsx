@@ -9,14 +9,10 @@ export default function PlayerContextProvider({ children }) {
   const seekBar = useRef();
 
   const [track, setTrack] = useState(songsData[0]);
+  const [queue, setQueue] = useState(songsData);
   const [playStatus, setPlayStatus] = useState(false);
-
-  const [minute, second] = track.duration.split(':');
-
-  const [time, setTime] = useState({
-    currentTime: { second: 0, minute: 0 },
-    totalTime: { second, minute },
-  });
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [time, setTime] = useState({ second: 0, minute: 0 });
 
   const play = () => {
     audioRef.current.play();
@@ -29,49 +25,44 @@ export default function PlayerContextProvider({ children }) {
   };
 
   const playWithId = async (id) => {
-    const trackWithId = songsData[id];
-    await setTrack(trackWithId);
+    await setTrack(songsData[id]);
     await audioRef.current.play();
     setPlayStatus(true);
-    setTime({
-      ...time,
-      totalTime: {
-        second: trackWithId.duration.split(':')[1],
-        minute: trackWithId.duration.split(':')[0],
-      },
-    });
   };
 
   const previous = async () => {
     if (track.id > 0) {
-      const prevTrack = songsData[track.id - 1];
-      await setTrack(prevTrack);
+      await setTrack(queue[track.id - 1]);
       await audioRef.current.play();
       setPlayStatus(true);
-      setTime({
-        ...time,
-        totalTime: {
-          second: prevTrack.duration.split(':')[1],
-          minute: prevTrack.duration.split(':')[0],
-        },
-      });
     }
   };
 
   const next = async () => {
-    if (track.id < songsData.length - 1) {
-      const nextTrack = songsData[track.id + 1];
-      await setTrack(nextTrack);
+    if (queue.indexOf(track) < queue.length - 1) {
+      await setTrack(queue[queue.indexOf(track) + 1]);
       await audioRef.current.play();
       setPlayStatus(true);
-      setTime({
-        ...time,
-        totalTime: {
-          second: nextTrack.duration.split(':')[1],
-          minute: nextTrack.duration.split(':')[0],
-        },
-      });
     }
+  };
+
+  const shuffle = (songs) => {
+    for (let i = songs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [songs[i], songs[j]] = [songs[j], songs[i]];
+    }
+    return songs;
+  };
+
+  const toggleShuffle = () => {
+    if (!isShuffled) {
+      const rest = queue.filter((_, index) => index !== track.id);
+      const shuffled = shuffle(rest);
+      setQueue([track, ...shuffled]);
+    } else {
+      setQueue(songsData);
+    }
+    setIsShuffled(!isShuffled);
   };
 
   const seekSong = async (e) => {
@@ -84,13 +75,10 @@ export default function PlayerContextProvider({ children }) {
       seekBar.current.style.width =
         Math.floor((audioRef.current.currentTime / audioRef.current.duration) * 100) + '%';
 
-      setTime((prev) => ({
-        ...prev,
-        currentTime: {
-          second: Math.floor(audioRef.current.currentTime % 60),
-          minute: Math.floor(audioRef.current.currentTime / 60),
-        },
-      }));
+      setTime({
+        second: Math.floor(audioRef.current.currentTime % 60),
+        minute: Math.floor(audioRef.current.currentTime / 60),
+      });
     };
   }, []);
 
@@ -102,6 +90,7 @@ export default function PlayerContextProvider({ children }) {
     setTrack,
     playStatus,
     setPlayStatus,
+    toggleShuffle,
     time,
     setTime,
     play,
